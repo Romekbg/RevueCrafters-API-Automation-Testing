@@ -1,0 +1,352 @@
+{
+	"info": {
+		"_postman_id": "4a290c70-5ef1-4010-ab55-2e85c43c255f",
+		"name": "RevueCrafters",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "28698796",
+		"_collection_link": "https://universal-escape-840963.postman.co/workspace/SoftUni-Demo~982aeeab-d690-4bfa-9381-ac8ae37834ce/collection/28698796-4a290c70-5ef1-4010-ab55-2e85c43c255f?action=share&source=collection_link&creator=28698796"
+	},
+	"item": [
+		{
+			"name": "Login and Authentication",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Code is 200\", function () {\r",
+							"    pm.response.to.have.status(200)\r",
+							"})  \r",
+							"\r",
+							"const responseData = pm.response.json()\r",
+							"\r",
+							"pm.collectionVariables.set(\"accessToken\", responseData.accessToken)\r",
+							"\r",
+							"pm.test(\"Response body has email, password and accessToken\", function(){\r",
+							"    pm.expect(responseData.email).not.to.be.empty\r",
+							"    pm.expect(responseData.password).not.to.be.empty\r",
+							"    pm.expect(responseData.accessToken).not.to.be.empty\r",
+							"\r",
+							"})"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\"email\": \"romek_bg@mail.bg\",\r\n\"password\": \"Romek123\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/api/User/Authentication",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"api",
+						"User",
+						"Authentication"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create a New Revue",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"var randomNumber = Math.floor(Math.random()*1000)\r",
+							"var randomTitle = \"title\" + randomNumber\r",
+							"\r",
+							"pm.collectionVariables.set(\"randomTitle\", randomTitle)"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Code is 200\", function () {\r",
+							"    pm.response.to.have.status(200)\r",
+							"})\r",
+							"\r",
+							"const responseData = pm.response.json()\r",
+							"\r",
+							"pm.test(\"Response message is 'Successfully created!'\", function(){\r",
+							"    pm.expect(responseData.msg).to.eql('Successfully created!')\r",
+							"})\r",
+							"\r",
+							"const revueTitle = pm.collectionVariables.get(\"randomTitle\")\r",
+							"\r",
+							"pm.test(\"Revue title is correct\", function(){\r",
+							"    pm.expect(responseData.revue.title).to.eql(revueTitle)\r",
+							"})"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\"title\": \"{{randomTitle}}\",\r\n\"description\": \"Description of the Revue for {{randomTitle}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/api/Revue/Create",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"api",
+						"Revue",
+						"Create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "List all Revues",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Code is 200\", function () {\r",
+							"    pm.response.to.have.status(200)\r",
+							"})\r",
+							"\r",
+							"const responseData = pm.response.json()\r",
+							"\r",
+							"pm.test(\"Response data is an array with more than 0 items\", function(){\r",
+							"    pm.expect(responseData).to.be.an(\"array\")\r",
+							"    pm.expect(responseData.length).to.be.greaterThan(0)\r",
+							"})\r",
+							"\r",
+							"const lastRevueId = responseData[responseData.length-1].id\r",
+							"pm.collectionVariables.set(\"lastRevueId\", lastRevueId)"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/api/Revue/All",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"api",
+						"Revue",
+						"All"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Edit the Created Revue",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Code is 200\", function () {\r",
+							"    pm.response.to.have.status(200)\r",
+							"})\r",
+							"\r",
+							"const responseData = pm.response.json()\r",
+							"\r",
+							"pm.test(\"Response message is 'Edited successfully'\", function(){\r",
+							"    pm.expect(responseData.msg).to.eql('Edited successfully')\r",
+							"})\r",
+							"\r",
+							"pm.test(\"Revue title is correct\", function(){\r",
+							"    pm.expect(responseData.revue.title).to.eql(\"editedTitle\")\r",
+							"})"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\"title\": \"editedTitle\",\r\n\"description\": \"Description of the Revue for editedTitle\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/api/Revue/Edit?revueId={{lastRevueId}}",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"api",
+						"Revue",
+						"Edit"
+					],
+					"query": [
+						{
+							"key": "revueId",
+							"value": "{{lastRevueId}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete the Edited Revue",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Code is 200\", function () {\r",
+							"    pm.response.to.have.status(200)\r",
+							"})\r",
+							"\r",
+							"const responseData = pm.response.json()\r",
+							"\r",
+							"pm.test(\"Response message is 'The revue is deleted!'\", function(){\r",
+							"    pm.expect(responseData.msg).to.eql('The revue is deleted!')\r",
+							"})"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseURL}}/api/Revue/Delete?revueId={{lastRevueId}}",
+					"host": [
+						"{{baseURL}}"
+					],
+					"path": [
+						"api",
+						"Revue",
+						"Delete"
+					],
+					"query": [
+						{
+							"key": "revueId",
+							"value": "{{lastRevueId}}"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{accessToken}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseURL",
+			"value": "https://d2925tksfvgq8c.cloudfront.net",
+			"type": "string"
+		},
+		{
+			"key": "accessToken",
+			"value": ""
+		},
+		{
+			"key": "randomTitle",
+			"value": ""
+		},
+		{
+			"key": "lastRevueId",
+			"value": ""
+		}
+	]
+}
