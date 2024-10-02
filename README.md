@@ -75,3 +75,9 @@ The tests include assertions for:
 - Status code (200 for successful requests)
 - Presence of important fields in the response body (e.g., email, accessToken)
 - Validation of revue creation and deletion.
+
+## License
+This repository is licensed under the MIT License.
+
+## Disclaimer
+Please note that the RevueCrafters app/API tested in this project is the property of SoftUni, and this repository only contains my personal testing and automation scripts related to it.
